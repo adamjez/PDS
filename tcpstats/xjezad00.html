@@ -1,0 +1,357 @@
+﻿<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <title>Projekt do předmětu PDS</title>
+    <meta charset="utf-8" />
+    <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+          crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
+          integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r"
+          crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+            integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+            crossorigin="anonymous"
+            type="text/javascript"></script>
+    <script type="text/javascript"
+            src="https://code.highcharts.com/highcharts.js"></script>
+    <script type="text/javascript"
+            src="result.js"></script>
+    <style type="text/css">
+        body {
+            padding-top: 50px;
+        }
+
+        .starter-template {
+            padding: 20px 0 0 0;
+            text-align: center;
+        }
+
+        .row {
+            text-align: center;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+        div.customGraph {
+            min-width: 400px; 
+            height: 400px; 
+            margin: 0 auto
+        }
+    </style>
+</head>
+<body onload="init()">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">TCPstats</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <div class="starter-template">
+            <p class="alert alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <span id="BaseText"></span>
+            </p>
+        </div>
+        <div id="home">
+            <h2>TCP statistiky</h2>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Základní statistiky <span class="glyphicon glyphicon-stats" aria-hidden="true"></span></h3>
+                        </div>
+                        <div class="panel-body text-left">
+                            <p>Celkový počet packetů: <span id="TotalPackets" class="bold"></span></p>
+                            <p>Počet TCP packetů: <span id="TotalTcpPackets" class="bold"></span></p>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" id="packetProgress"
+                                     aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Pokročilé statistiky <span class="glyphicon glyphicon-stats" aria-hidden="true"></span></h3>
+                        </div>
+                        <div class="panel-body text-left">
+                            <p>Průměrný RTT: <span id="AVGRoundTripTime" class="bold"></span></p>
+   
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Grafy <span class="glyphicon glyphicon-stats" aria-hidden="true"></span></h3>
+                        </div>
+                        <div class="panel-body">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Grafy <span class="glyphicon glyphicon-stats" aria-hidden="true"></span></h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div id="rttContainer" class="customGraph"></div>
+                            </div>
+                            <div class="row">
+                                <div id="slowStartContainer" class="customGraph"></div>
+                            </div>
+                            <div class="row">
+                                <div id="bandwidthContainer" class="customGraph"></div>
+                            </div>
+                            <div class="row">
+                                <div id="windowScalingContainer" class="customGraph"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="about">
+            <h2>About</h2>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h4>Projekt do předmětu PDS 2015/2016</h4>
+                    <p>Varianta: <b>TCPstats</b></p>
+                    <p>Implementační jazyk: <b>Python 2.7</b></p>
+                    <p>Použité knihovny: <b>json, dpkt, socket</b></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="contact">
+            <h2>Contact</h2>
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <p>Autor: <b>Adam Jež</b></p>
+                    <p>Login: <b>xjezad00</b></p>
+                    <p>Email: <b>xjezad00@stud.fit.vutbr.cz</b></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        // Utility functions
+        function prepareDataset(source) {
+            var newList = [];
+
+            $.each(source, function (key, value) {
+                // key is the key
+                // value is the value
+                var dataset = {};
+                dataset.name = key;
+                dataset.data = [];
+
+                value.forEach(function (entry) {
+                    var point = {}
+                    point.y = entry[1];
+                    point.x = entry[0];
+                    dataset.data.push(point);
+                });
+
+                newList.push(dataset);
+            });
+
+            return newList;
+        }
+
+        function setBaseStats(parsedData)
+        {
+            var totalPackets = parsedData['TotalPackets'];
+            var totalTcpPackets = parsedData['TotalTcpPackets'];
+
+            $('#TotalPackets').text(totalPackets);
+            $('#TotalTcpPackets').text(totalTcpPackets);
+
+            var packetProgress = $('#packetProgress');
+            if (totalPackets == 0) {
+                packetProgress.hide();
+            }
+            else {
+                var percent = Math.floor((totalTcpPackets / totalPackets) * 100) + '%';
+                packetProgress.text(percent + " poměr");
+                packetProgress.width(percent);
+            }
+        }
+
+        function setAdvancedStats(parsedData) {
+            var avgRTT = parseFloat(parsedData['AVGRoundTripTime']);
+            $('#AVGRoundTripTime').text(Math.round(avgRTT*10000)/10000 + ' s');
+
+            initRTTGraph(parsedData);
+            initSlowStartGraph(parsedData);
+            initBandwidthListGraph(parsedData);
+            initWindowScalingGraph(parsedData);
+        }
+
+        function init() {
+            var resultLabel = $('#BaseText');
+            if (typeof data === 'undefined') {
+                resultLabel.parent().addClass('alert-danger');
+                resultLabel.text("Soubor se nepodařilo načíst. Proveďte nejdříve analýzu.");
+                return;
+            }
+            var parsedData = JSON.parse(data);
+
+            setBaseStats(parsedData);
+            setAdvancedStats(parsedData);
+
+            resultLabel.parent().addClass('alert-success');
+            $('#BaseText').text("Soubor s daty byl úspěšně načten");
+        }
+
+
+        function initRTTGraph (parsedData) {
+            // Prepapre data
+            var newList = prepareDataset(parsedData['RTT']);
+
+
+            $('#rttContainer').highcharts({
+                title: {
+                    text: 'Round Trip Time',
+                    x: -20 //center
+                },
+                xAxis: {
+                    title: {
+                        text: 'Relative Sequence number [B]'
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Round Trip Time [second]'
+                    }
+                },
+                tooltip: {
+                    valueSuffix: 'seconds'
+                },
+                series: newList
+            });
+        };
+
+        function initSlowStartGraph(parsedData) {
+            // Prepapre data
+            var newList = prepareDataset(parsedData['TimeSeq']);
+
+            $('#slowStartContainer').highcharts({
+                title: {
+                    text: 'Slow Start (Time/Sequence) Graph',
+                    x: -20 //center
+                },
+                xAxis: {
+                    title: {
+                        text: 'Time [second]'
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Sequence number [B]'
+                    }
+                },
+                tooltip: {
+                    valueSuffix: 'seconds'
+                },
+                series: newList
+            });
+        };
+
+        function initBandwidthListGraph(parsedData) {
+            // Prepapre data
+            var newList = prepareDataset(parsedData['Bandwidth']);
+
+            $('#bandwidthContainer').highcharts({
+                title: {
+                    text: 'Bandwidth Graph',
+                    x: -20 //center
+                },
+                chart: {
+                    type: 'spline'
+                },
+                xAxis: {
+                    title: {
+                        text: 'Time [second]'
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Average bandwidth [B/s]'
+                    }
+                },
+                tooltip: {
+                    enabled: false
+                },
+                series: newList
+            });
+        };
+
+        function initWindowScalingGraph(parsedData) {
+            // Prepapre data
+            var newList = prepareDataset(parsedData['Window']);
+
+            $('#windowScalingContainer').highcharts({
+                title: {
+                    text: 'Sender/Receiver Window Graph',
+                    x: -20 //center
+                },
+                chart: {
+                    type: 'spline'
+                },
+                xAxis: {
+                    title: {
+                        text: 'Time [second]'
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Window Size [B]'
+                    }
+                },
+                tooltip: {
+                    enabled: false
+                },
+                series: newList
+            });
+        };
+    </script>
+</body>
+</html>
