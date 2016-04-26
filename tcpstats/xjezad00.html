@@ -22,7 +22,7 @@
     <script type="text/javascript"
             src="https://code.highcharts.com/highcharts.js"></script>
     <script type="text/javascript"
-            src="result.js"></script>
+            src="log/result.js"></script>
     <style type="text/css">
         body {
             padding-top: 50px;
@@ -93,9 +93,10 @@
                             <p>Počet TCP packetů: <span id="TotalTcpPackets" class="bold"></span></p>
                             <div class="progress">
                                 <div class="progress-bar" role="progressbar" id="packetProgress"
-                                     aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" >
+                                     aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
                                 </div>
                             </div>
+                            <p>Poměr TCP paketů k jiným protokolů stejné vrstvy</p>
                         </div>
                     </div>
                 </div>
@@ -152,7 +153,9 @@
                     <h4>Projekt do předmětu PDS 2015/2016</h4>
                     <p>Varianta: <b>TCPstats</b></p>
                     <p>Implementační jazyk: <b>Python 2.7</b></p>
-                    <p>Použité knihovny: <b>json, dpkt, socket</b></p>
+                    <p>Použité knihovny Python: <b>json, dpkt, socket</b></p>
+                    <p>Použité knihovny Javascript: <b>jQuery, Highcharts, Bootstrap</b></p>
+                    <p>Před spuštěním je nutno: <b>nainstalovat knihovnu dkpt ('sudo apt-get install dkpt')</b></p>
                 </div>
             </div>
         </div>
@@ -181,14 +184,7 @@
                 // value is the value
                 var dataset = {};
                 dataset.name = key;
-                dataset.data = [];
-
-                value.forEach(function (entry) {
-                    var point = {}
-                    point.y = entry[1];
-                    point.x = entry[0];
-                    dataset.data.push(point);
-                });
+                dataset.data = value;
 
                 newList.push(dataset);
             });
@@ -210,7 +206,7 @@
             }
             else {
                 var percent = Math.floor((totalTcpPackets / totalPackets) * 100) + '%';
-                packetProgress.text(percent + " poměr");
+                packetProgress.text(percent);
                 packetProgress.width(percent);
             }
         }
@@ -259,11 +255,19 @@
                 },
                 yAxis: {
                     title: {
-                        text: 'Round Trip Time [second]'
+                        text: 'Round Trip Time [ms]'
                     }
                 },
                 tooltip: {
-                    valueSuffix: 'seconds'
+                    valueSuffix: ' ms',
+                    formatter: function () {
+                        return '<tspan style="fill:' + this.series.color + '">●</tspan> ' + this.series.name +
+                            '<br /> Round trip time <b>' +
+                            this.y.toFixed(4) +
+                            '</b> ms at <b>' +
+                            this.x +
+                            '</b> relative sequence number';
+                    }
                 },
                 series: newList
             });
@@ -289,7 +293,15 @@
                     }
                 },
                 tooltip: {
-                    valueSuffix: 'seconds'
+                    valueSuffix: ' bytes',
+                    formatter: function () {
+                        return '<tspan style="fill:' + this.series.color + '">●</tspan> ' + this.series.name +
+                            '<br /> Sequence number <b>' +
+                            this.y +
+                            '</b> bytes at <b>' +
+                            this.x.toFixed(4) +
+                            '</b> second';
+                    }
                 },
                 series: newList
             });
@@ -318,7 +330,15 @@
                     }
                 },
                 tooltip: {
-                    enabled: false
+                    valueSuffix: ' bytes/seconds',
+                    formatter: function () {
+                        return '<tspan style="fill:' + this.series.color + '">●</tspan> ' + this.series.name +
+                            '<br /> Average bandwidth <b>' +
+                            this.y.toFixed(4) +
+                            '</b> bytes/seconds at <b>' +
+                            this.x.toFixed(4) +
+                            '</b> second';
+                    }
                 },
                 series: newList
             });
@@ -347,7 +367,15 @@
                     }
                 },
                 tooltip: {
-                    enabled: false
+                    valueSuffix: ' bytes',
+                    formatter: function () {
+                        return '<tspan style="fill:' + this.series.color + '">●</tspan> ' + this.series.name +
+                            '<br /> Window size <b>' +
+                            this.y +
+                            '</b> bytes at <b>' +
+                            this.x.toFixed(4) +
+                            '</b> seconds';
+                    }
                 },
                 series: newList
             });

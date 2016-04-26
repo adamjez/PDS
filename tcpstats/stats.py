@@ -1,9 +1,14 @@
 import json
+
 class Stats:
     def __init__(self, outputFile):
         self.outputFile = outputFile
-        self.data = {'TotalPackets': 0,'TotalTcpPackets': 0,'RTT': {},'TimeSeq': {}, 'Bandwidth': {}, 'Window': {}}
+        self.data = {'TotalPackets': 0,'TotalTcpPackets': 0, \
+            'RTT': {},'TimeSeq': {}, 'Bandwidth': {}, 'Window': {}, \
+            'AVGBandwidth' : {}}
         self.tmpData = {'Bandwidth': {}}
+        # Avg inverval in seconds
+        self.avgInverval = 0.1
 
     def save(self):
         self.preSaveActions();
@@ -50,8 +55,21 @@ class Stats:
 
         lengthAggr = 0
         for key, value in self.tmpData['Bandwidth'].iteritems():
-            self.data['Bandwidth'][key] = []
+            newKey = key + ' average'
+            self.data['Bandwidth'][newKey] = []
             for (timestamp, length) in value:
                 lengthAggr += length
                 bandwidth = lengthAggr / timestamp if timestamp != 0 else 0
-                self.data['Bandwidth'][key].append((timestamp, bandwidth))
+                self.data['Bandwidth'][newKey].append((timestamp, bandwidth))
+
+        for key, value in self.tmpData['Bandwidth'].iteritems():
+            newKey = key + ' immediate (window 100 ms)'
+            self.data['Bandwidth'][newKey] = []
+            window = []
+            for (timestamp, length) in value:
+                window.append((timestamp, length))
+                window = [x for x in window if x[0] > timestamp - self.avgInverval]
+
+                bandwidth = sum([x[1] for x in window]) / float(self.avgInverval)
+                self.data['Bandwidth'][newKey].append((timestamp, bandwidth))
+

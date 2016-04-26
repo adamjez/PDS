@@ -3,6 +3,7 @@
 import dpkt
 # To encode ip adresses
 import socket
+import sys
 from stats import Stats
 
 # Converts byte array to int
@@ -104,20 +105,20 @@ class Analyzer:
         # We have got SYN packet with ACK flag
         if ( tcpPacket.flags & dpkt.tcp.TH_SYN ) != 0:
             self.streams.addStream(tcpConnection)
-        else:
-            initialTimestamp = self.streams.getTimeStamp(tcpConnection)
-            relativeTimestamp = tcpConnection.getTimestamp() - initialTimestamp
-            windowScaling = self.streams.getWindowScaling(tcpConnection)
-            self.stats.addWindowItem(tcpConnection, relativeTimestamp, tcpPacket.win * windowScaling)
-
-
+            
         initialTimestamp = self.streams.getTimeStamp(tcpConnection)
         initialSeqNumber = self.streams.getSeqNumber(tcpConnection)
         relativeTimestamp = tcpConnection.getTimestamp() - initialTimestamp
         relativeSeqNumber = tcpPacket.seq - initialSeqNumber
         self.stats.addTimeLengthItem(tcpConnection, relativeTimestamp, len(tcpPacket.data))
         self.stats.addTimeSeqItem(tcpConnection, relativeTimestamp, relativeSeqNumber)
-        self.rtt.addPacket(tcpConnection, tcpPacket.seq + len(tcpPacket.data), tcpConnection.getTimestamp())
+        if len(tcpPacket.data) > 0:
+            self.rtt.addPacket(tcpConnection, tcpPacket.seq + len(tcpPacket.data), tcpConnection.getTimestamp())
+
+        # Compute Window size
+        #if ( tcpPacket.flags & dpkt.tcp.TH_SYN ) == 0:
+        windowScaling = self.streams.getWindowScaling(tcpConnection)
+        self.stats.addWindowItem(tcpConnection, relativeTimestamp, tcpPacket.win * windowScaling)
 
         # We have got TCP packet with ACK flag
         if ( tcpPacket.flags & dpkt.tcp.TH_ACK ) != 0:
@@ -126,12 +127,15 @@ class Analyzer:
                 relativeSeqNumber = packet[1] - self.streams.getSeqNumber(packet[0])
                 self.stats.addRTTItem(packet[0], tcpConnection.getTimestamp() - packet[2], relativeSeqNumber)
 
+if len(sys.argv) != 2:
+    print r"Script have to be launched with 1 parameter"
+    print r"Excample: ./python2 tcpstats.py sample.pcap"
+    sys.exit()
 
-stats = Stats('result.js')
+stats = Stats('log/result.js')
 analyzer = Analyzer(stats)
 
-
-with open(r'C:\Users\adamj\OneDrive\Study\PDS\slow_start.cap', "rb") as readFile:
+with open(sys.argv[1], "rb") as readFile:
     pcap = dpkt.pcap.Reader(readFile)
 
     for ts, buf in pcap:

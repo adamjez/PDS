@@ -12,6 +12,9 @@
     <OutputPath>.</OutputPath>
     <Name>tcpstats</Name>
     <RootNamespace>tcpstats</RootNamespace>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <CommandLineArguments>C:\Users\adamj\OneDrive\Study\PDS\slow_start.cap</CommandLineArguments>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
