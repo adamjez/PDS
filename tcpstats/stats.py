@@ -13,10 +13,13 @@ class Stats:
     def save(self):
         self.preSaveActions();
         # Output file: data = '[{"name" : "Harry", "age" : "32"}]';
-        with open(self.outputFile, 'w') as outFile:
-            outFile.write('data = \'')
-            json.dump(self.data, outFile)
-            outFile.write('\';')
+        try:
+            with open(self.outputFile, 'w') as outFile:
+                outFile.write('data = \'')
+                json.dump(self.data, outFile)
+                outFile.write('\';')
+        except:
+            print "Couldn't create log file: " + self.outputFile
 
     def addToLabeledDict(self, dictionary, tcpConnection, value):
         label = tcpConnection.getSrcIp() + "->" + tcpConnection.getDstIp()

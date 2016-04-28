@@ -155,7 +155,12 @@
                     <p>Implementační jazyk: <b>Python 2.7</b></p>
                     <p>Použité knihovny Python: <b>json, dpkt, socket</b></p>
                     <p>Použité knihovny Javascript: <b>jQuery, Highcharts, Bootstrap</b></p>
-                    <p>Před spuštěním je nutno: <b>nainstalovat knihovnu dkpt ('sudo apt-get install dkpt')</b></p>
+                    <p>Před spuštěním je nutno: <b>nainstalovat knihovnu dkpt ('sudo apt-get install dkpt')</b>
+                    </p>
+                    <p>Struktura projektu: python skripty <b>tcpstats</b> a <b>stats.py</b> pro analyzu, pro prezentaci <b>xjezad00.html</b>, pro zmenu prav skriptu je pribalen <b>Makefile</b></p>
+                    <p><b>tcpstats</b> - analyzuje pcap a cap soubory a uklada jednotlive statistiky do tridy stats
+                    </p>
+                    <p><b>stats.py</b> - obsahuje tridu stats, ktera obsahuje jednotlive statistiky, na konci vypocita agregovane hodnoty a ulozi vysledek do js souboru</p>
                 </div>
             </div>
         </div>
@@ -250,7 +255,7 @@
                 },
                 xAxis: {
                     title: {
-                        text: 'Relative Sequence number [B]'
+                        text: 'Relative sequence number [B]'
                     }
                 },
                 yAxis: {
@@ -289,14 +294,14 @@
                 },
                 yAxis: {
                     title: {
-                        text: 'Sequence number [B]'
+                        text: 'Relative sequence number [B]'
                     }
                 },
                 tooltip: {
                     valueSuffix: ' bytes',
                     formatter: function () {
                         return '<tspan style="fill:' + this.series.color + '">●</tspan> ' + this.series.name +
-                            '<br /> Sequence number <b>' +
+                            '<br /> Relative sequence number <b>' +
                             this.y +
                             '</b> bytes at <b>' +
                             this.x.toFixed(4) +
